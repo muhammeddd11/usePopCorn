@@ -80,13 +80,12 @@ function NumResult({ movies }) {
   );
 }
 
-function NavBar({ movies }) {
+function NavBar({ children }) {
   return (
     <>
       <nav className="nav-bar">
         <Logo />
-        <Search />
-        <NumResult movies={movies} />
+        {children}
       </nav>
     </>
   );
@@ -121,18 +120,18 @@ function ListOfMovies({ movies }) {
   );
 }
 
-function ListBox({ movies }) {
-  const [isOpen1, setIsOpen1] = useState(true);
+function Box({ children }) {
+  const [isOpen, setIsOpen] = useState(true);
   return (
     <>
       <div className="box">
         <button
           className="btn-toggle"
-          onClick={() => setIsOpen1((open) => !open)}
+          onClick={() => setIsOpen((open) => !open)}
         >
-          {isOpen1 ? "–" : "+"}
+          {isOpen ? "–" : "+"}
         </button>
-        {isOpen1 && <ListOfMovies movies={movies} />}
+        {isOpen && children}
       </div>
     </>
   );
@@ -201,48 +200,41 @@ function WatchMovieList({ watched }) {
   );
 }
 
-function WatchBox() {
-  const [isOpen2, setIsOpen2] = useState(true);
-  const [watched, setWatched] = useState(tempWatchedData);
-
+function Main({ children }) {
   return (
     <>
-      <div className="box">
-        <button
-          className="btn-toggle"
-          onClick={() => setIsOpen2((open) => !open)}
-        >
-          {isOpen2 ? "–" : "+"}
-        </button>
-        {isOpen2 && (
-          <>
-            <Watched watched={watched} />
-            <WatchMovieList watched={watched} />
-          </>
-        )}
-      </div>
-    </>
-  );
-}
-
-function Main({ movies }) {
-  return (
-    <>
-      <main className="main">
-        <ListBox movies={movies} />
-        <WatchBox />
-      </main>
+      <main className="main">{children}</main>
     </>
   );
 }
 
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
+  const [watched, setWatched] = useState(tempWatchedData);
 
   return (
     <>
-      <NavBar movies={movies} />
-      <Main movies={movies} />
+      <NavBar>
+        <Search />
+        <NumResult movies={movies} />
+      </NavBar>
+      <Main>
+        {/*
+          explicity passing jsx as a prop using prop elemen
+        <Box element={<>
+        <Watched watched={watched} />
+          <WatchMovieList watched={watched} />
+        </>} */}
+
+        {/* //impicity passing the jsx as a prop {component composition} */}
+        <Box movies={movies}>
+          <ListOfMovies movies={movies} />
+        </Box>
+        <Box>
+          <Watched watched={watched} />
+          <WatchMovieList watched={watched} />
+        </Box>
+      </Main>
     </>
   );
 }
